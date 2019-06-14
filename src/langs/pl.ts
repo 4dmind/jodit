@@ -26,7 +26,7 @@ export default {
     'Clear Formatting': 'Wyczyść formatowanie',
     'Fill color or set the text color': 'Zmień kolor wypełnienia lub tekstu',
     'Redo': 'Przywróć',
-    'Undo': 'Cofnij,
+    'Undo': 'Cofnij',
     'Bold': 'Pogrubienie',
     'Italic': 'Kursywa',
     'Insert Unordered List': 'Lista nieuporządkowana',
@@ -58,7 +58,7 @@ export default {
     'Decrease Indent': 'Zmniejsz wcięcie',
     'Increase Indent': 'Zwiększ wcięcie',
     'Select Special Character': 'Zaznacz znak specjalny',
-    'Insert Special Character': Wstaw znak specjalny',
+    'Insert Special Character': 'Wstaw znak specjalny',
 
     'Paint format': 'Kopiuj format',
     'Change mode': 'Zmień tryb',
