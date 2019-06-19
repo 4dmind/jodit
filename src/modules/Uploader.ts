@@ -46,7 +46,7 @@ Config.prototype.enableDragAndDropFileToEditor = true;
 Config.prototype.uploader = {
     url: '',
 
-    insertImageAsBase64URI: false,
+    insertImageAsBase64URI: true,
     imagesExtensions: ['jpg', 'png', 'jpeg', 'gif'],
     headers: null,
     data: null,
