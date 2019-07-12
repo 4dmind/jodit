@@ -314,9 +314,9 @@ export class Uploader extends Component implements IUploader {
                         promises.push(
                             new Promise<any>((resolve, reject) => {
                                 reader.onerror = reject;
-                                reader.onloadend = () => {
+                                reader.onloadend = async () => {
 
-                                    const resultFile = resizeImage(reader) || reader.result;
+                                    const resultFile = await resizeImage(reader) || reader.result;
 
                                     const resp: IUploaderData = {
                                         baseurl: '',
@@ -339,16 +339,15 @@ export class Uploader extends Component implements IUploader {
                                         );
                                     }
 
-                                    console.log('test1');
                                     resolve(resp);
                                 };
 
-                                const resizeImage = (reader: FileReader) => {
+                                const resizeImage = async (
+                                    reader: FileReader
+                                ) => {
                                     if (!reader.result) {
                                         return null;
                                     }
-
-                                    console.log('test2');
 
                                     const img = document.createElement('img');
                                     img.src = reader.result.toString();
@@ -396,7 +395,6 @@ export class Uploader extends Component implements IUploader {
                                     return canvas.toDataURL(file.type);
                                 }
 
-                                console.log('test3');
                                 reader.readAsDataURL(file);
                             })
                         );
