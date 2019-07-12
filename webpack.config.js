@@ -89,7 +89,7 @@ module.exports = (env, argv) => {
                             pure_getters: true,
                             unsafe: true,
                             unsafe_comps: true,
-                            drop_console: true,
+                            drop_console: false,
                             passes: 2
                         },
                         output: {
