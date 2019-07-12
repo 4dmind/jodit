@@ -321,7 +321,7 @@ export class Uploader extends Component implements IUploader {
                                 reader.onloadend = async () => {
 
                                     const resultFile = await resizeImage(reader) || reader.result;
-                                    console.log('resultFile', resultFile);
+
                                     const resp: IUploaderData = {
                                         baseurl: '',
                                         files: [resultFile],
