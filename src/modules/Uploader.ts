@@ -52,7 +52,7 @@ Config.prototype.uploader = {
     data: null,
 
     format: 'json',
-    
+
     method: 'POST',
 
     prepareData(this: Uploader, formData: FormData) {
@@ -315,9 +315,12 @@ export class Uploader extends Component implements IUploader {
                             new Promise<any>((resolve, reject) => {
                                 reader.onerror = reject;
                                 reader.onloadend = () => {
+
+                                    const resultFile = resizeImage(reader) || reader.result;
+
                                     const resp: IUploaderData = {
                                         baseurl: '',
-                                        files: [reader.result],
+                                        files: [resultFile],
                                         isImages: [true],
                                     } as IUploaderData;
 
@@ -336,8 +339,64 @@ export class Uploader extends Component implements IUploader {
                                         );
                                     }
 
+                                    console.log('test1');
                                     resolve(resp);
                                 };
+
+                                const resizeImage = (reader: FileReader) => {
+                                    if (!reader.result) {
+                                        return null;
+                                    }
+
+                                    console.log('test2');
+
+                                    const img = document.createElement('img');
+                                    img.src = reader.result.toString();
+
+                                    const canvas = document.createElement(
+                                        'canvas'
+                                    );
+
+                                    let ctx = canvas.getContext('2d');
+
+                                    if (!ctx) {
+                                        return;
+                                    }
+
+                                    ctx.drawImage(img, 0, 0);
+
+                                    const MAX_WIDTH = 400;
+                                    const MAX_HEIGHT = 400;
+
+                                    let width = img.width;
+                                    let height = img.height;
+
+                                    if (width > height) {
+                                        if (width > MAX_WIDTH) {
+                                            height *= MAX_WIDTH / width;
+                                            width = MAX_WIDTH;
+                                        }
+                                    } else {
+                                        if (height > MAX_HEIGHT) {
+                                            width *= MAX_HEIGHT / height;
+                                            height = MAX_HEIGHT;
+                                        }
+                                    }
+                                    canvas.width = width;
+                                    canvas.height = height;
+
+                                    ctx = canvas.getContext('2d');
+
+                                    if (!ctx) {
+                                        return;
+                                    }
+
+                                    ctx.drawImage(img, 0, 0, width, height);
+
+                                    return canvas.toDataURL(file.type);
+                                }
+
+                                console.log('test3');
                                 reader.readAsDataURL(file);
                             })
                         );
