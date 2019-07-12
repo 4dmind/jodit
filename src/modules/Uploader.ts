@@ -47,6 +47,10 @@ Config.prototype.uploader = {
     url: '',
 
     insertImageAsBase64URI: true,
+    imageBase64Options: {
+        maxWidth: 1000,
+        maxHeight: 1000,
+    },
     imagesExtensions: ['jpg', 'png', 'jpeg', 'gif'],
     headers: null,
     data: null,
@@ -317,7 +321,6 @@ export class Uploader extends Component implements IUploader {
                                 reader.onloadend = async () => {
 
                                     const resultFile = await resizeImage(reader) || reader.result;
-
                                     const resp: IUploaderData = {
                                         baseurl: '',
                                         files: [resultFile],
@@ -342,58 +345,64 @@ export class Uploader extends Component implements IUploader {
                                     resolve(resp);
                                 };
 
-                                const resizeImage = async (
-                                    reader: FileReader
-                                ) => {
-                                    if (!reader.result) {
-                                        return null;
-                                    }
-
-                                    const img = document.createElement('img');
-                                    img.src = reader.result.toString();
-
-                                    const canvas = document.createElement(
-                                        'canvas'
-                                    );
-
-                                    let ctx = canvas.getContext('2d');
-
-                                    if (!ctx) {
-                                        return;
-                                    }
-
-                                    ctx.drawImage(img, 0, 0);
-
-                                    const MAX_WIDTH = 400;
-                                    const MAX_HEIGHT = 400;
-
-                                    let width = img.width;
-                                    let height = img.height;
-
-                                    if (width > height) {
-                                        if (width > MAX_WIDTH) {
-                                            height *= MAX_WIDTH / width;
-                                            width = MAX_WIDTH;
+                                const resizeImage = (reader: FileReader) => {
+                                    return new Promise(resolve => {
+                                        if (!reader.result) {
+                                            return resolve();
                                         }
-                                    } else {
-                                        if (height > MAX_HEIGHT) {
-                                            width *= MAX_HEIGHT / height;
-                                            height = MAX_HEIGHT;
-                                        }
-                                    }
-                                    canvas.width = width;
-                                    canvas.height = height;
 
-                                    ctx = canvas.getContext('2d');
+                                        const image = new Image();
+                                        image.src = reader.result.toString();
 
-                                    if (!ctx) {
-                                        return;
-                                    }
+                                        image.onload = async () => {
+                                            const canvas = document.createElement(
+                                                'canvas'
+                                            );
 
-                                    ctx.drawImage(img, 0, 0, width, height);
+                                            const ctx = canvas.getContext('2d');
 
-                                    return canvas.toDataURL(file.type);
-                                }
+                                            if (!ctx) {
+                                                return resolve();
+                                            }
+
+                                            const maxWidth = this.options
+                                                .imageBase64Options.maxWidth;
+
+                                            const maxHeight = this.options
+                                                .imageBase64Options.maxHeight;
+
+                                            let width = image.width;
+                                            let height = image.height;
+
+                                            if (width > height) {
+                                                if (width > maxWidth) {
+                                                    height *= maxWidth / width;
+                                                    width = maxWidth;
+                                                }
+                                            } else {
+                                                if (height > maxHeight) {
+                                                    width *= maxHeight / height;
+                                                    height = maxHeight;
+                                                }
+                                            }
+
+                                            canvas.width = width;
+                                            canvas.height = height;
+
+                                            ctx.drawImage(
+                                                image,
+                                                0,
+                                                0,
+                                                width,
+                                                height
+                                            );
+
+                                            resolve(
+                                                canvas.toDataURL(file.type)
+                                            );
+                                        };
+                                    });
+                                };
 
                                 reader.readAsDataURL(file);
                             })
